@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor</title>
+</head>
+<body>
+
+    <form method="POST" action="/modifi"> <hr>
+        <p><b>Id sensor: </b> <%= label_id_sensor %></p>
+  
+        <p>Nombre:
+          <input type="text" name="input_nombre" id="input_nombre" value= <%= input_nombre_sensor %> required/></p>
+        <p>Modelo:
+          <input type="text" name="input_modelo" id="input_modelo" value= <%= input_modelo_sensor %> required/></p>
+  
+        <p>Funcion de Transferencia: </p>
+          <p> <input type="input_VT_A" name="input_VT_A" id="input_VT_A" value= <%= input_VTA_sensor %> required/> X2 +
+            <input type="input_VT_B" name="input_VT_B" id="input_VT_B" value= <%= input_VTB_sensor %> required/> X +
+            <input type="input_VT_C" name="input_VT_C" id="input_VT_C" value= <%= input_VTC_sensor %> required/>
+        </p>
+  
+        <p>Rango valores criticos: </p>
+        <p> Critico Min: <input type="input_Cr_Min" name="input_Cr_Min" id="input_Cr_Min" value= <%= input_CritMin_sensor %> required/></p>
+          <p> Critico Max: <input type="input_Cr_Max" name="input_Cr_Max" id="input_Cr_Max" value= <%= input_CritMax_sensor %> required/></p>
+  
+        <p>Tiempo entre muestras:
+        <input type="text" name="input_muestreo" id="input_muestreo" value= <%= input_FrecMuestreo_sensor %> required/></p>
+  
+        <input type="hidden" value= <%= hidden_id %> name="hidden_id"/> 
+        <input type="hidden" value="modificar_sensor" name="action"/>
+        <input type="submit" value="Modificar">
+        <!---->
+    </form>
+
+    <form method="POST" action="/">
+        <input type="submit" value="Volver">
+    </form>
+
+</body>
+</html>
