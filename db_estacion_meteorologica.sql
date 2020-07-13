@@ -1,55 +1,29 @@
-﻿-- phpMyAdmin SQL Dump
--- version 5.0.2
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 05-07-2020 a las 04:47:12
--- Versión del servidor: 10.4.13-MariaDB
--- Versión de PHP: 7.4.7
-
+﻿
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+USE db_estacion_meteorologica;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de datos: `db_estacion_meterologica`
---
-CREATE DATABASE db_estacion_meterologica;
-USE db_estacion_meterologica;
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `configuracion`
---
 
 CREATE TABLE `configuracion` (
   `id_config` int(11) NOT NULL,
   `horario_encendido_luminaria` varchar(25) NOT NULL,
   `horario_apagado_luminaria` varchar(25) NOT NULL,
-  `PIN_alarma_meterologica` int(11) NOT NULL,
+  `PIN_alarma_meteorologica` int(11) NOT NULL,
   `PIN_luminaria` int(11) NOT NULL,
   `PIN_sensor_antirrobo` int(11) NOT NULL,
   `email_notificacion` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Volcado de datos para la tabla `configuracion`
---
 
-INSERT INTO `configuracion` (`id_config`, `horario_encendido_luminaria`, `horario_apagado_luminaria`, `PIN_alarma_meterologica`, `PIN_luminaria`, `PIN_sensor_antirrobo`, `email_notificacion`) VALUES
+
+INSERT INTO `configuracion` (`id_config`, `horario_encendido_luminaria`, `horario_apagado_luminaria`, `PIN_alarma_meteorologica`, `PIN_luminaria`, `PIN_sensor_antirrobo`, `email_notificacion`) VALUES
 (1, '22:00', '14:00', 4, 7, 8, 'maxybarrionuebo@gmail.com');
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `evento`
---
+
+
 
 CREATE TABLE `evento` (
   `id_evento` int(11) NOT NULL,
@@ -58,9 +32,7 @@ CREATE TABLE `evento` (
   `tipo_evento` varchar(25) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Volcado de datos para la tabla `evento`
---
+
 
 INSERT INTO `evento` (`id_evento`, `fecha_y_hora`, `descripcion`, `tipo_evento`) VALUES
 (5, '2020-06-22 13:51:22', 'El sensor Temperatura, de modelo: PamelaDavid ha alcanzado valores criticos. Lectura de de:43', 'Evento Critico'),
@@ -106,11 +78,9 @@ INSERT INTO `evento` (`id_evento`, `fecha_y_hora`, `descripcion`, `tipo_evento`)
 (45, '2020-07-04 23:03:15', 'El sensor Viento, de modelo: Melina ha alcanzado valores criticos. Lectura de de:97.9209654884854', 'Evento Critico'),
 (46, '2020-07-04 23:04:36', 'El sensor Viento, de modelo: Melina ha alcanzado valores criticos. Lectura de de:71.00920562460583', 'Evento Critico');
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `sensor`
---
+
+
 
 CREATE TABLE `sensor` (
   `id_sensor` int(11) NOT NULL,
@@ -125,34 +95,24 @@ CREATE TABLE `sensor` (
   `frecuencia_muestreo` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Volcado de datos para la tabla `sensor`
---
+
 
 INSERT INTO `sensor` (`id_sensor`, `nombre`, `modelo`, `valor_transferencia_A`, `valor_transferencia_B`, `valor_transferencia_C`, `critico_max`, `critico_min`, `PIN`, `frecuencia_muestreo`) VALUES
 (1, 'Temperatura', 'PamelaDavid', 0, 1, 0, 60, 60, 2, 4),
 (2, 'Viento', 'Melina', 0, 1, 0, 100, 65, 3, 0.5),
 (3, 'Humedad', 'unalinda', 0, 1, 0, 100, 100, 5, 0.4);
 
---
--- Índices para tablas volcadas
---
 
---
--- Indices de la tabla `configuracion`
---
+
+
 ALTER TABLE `configuracion`
   ADD PRIMARY KEY (`id_config`);
 
---
--- Indices de la tabla `evento`
---
+
 ALTER TABLE `evento`
   ADD PRIMARY KEY (`id_evento`);
 
---
--- Indices de la tabla `sensor`
---
+
 ALTER TABLE `sensor`
   ADD PRIMARY KEY (`id_sensor`);
 COMMIT;

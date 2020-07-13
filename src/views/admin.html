@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src= "https://code.jquery.com/jquery-1.12.4.min.js"> </script> 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <title>Estacion Meteorologica</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1> Estacion Meteorologica </h1>
+
+    <div class= "container">
+          <div class= "gaugeTemp" id="gaugeTemp" >  </div>
+          <div class= "gaugeHum" id="gaugeHum" > </div>
+          <div class= "gaugeViento" id="gaugeViento" > </div>
+    </div>
+
+    <!--------------------------------------------------->
+
+    <form method="POST" action="/apagarSensores">
+      <label><input type="checkbox" name= "cbox1" id="cbox1" value="gaugeTemp" > Deshabilitar Temperatura</label>
+      <label><input type="checkbox" name= "cbox2" id="cbox2" value="gaugeHum"> Deshabilitar Humedad</label>
+      <label><input type="checkbox" name= "cbox3" id="cbox3" value="gaugeViento"> Deshabilitar Viento</label>
+  
+    
+    
+    <script type="text/javascript"> 
+      $(document).ready(function() { 
+          $('input[type="checkbox"]').click(function() { 
+              var inputValue = $(this).attr("value"); 
+              $.post("/"+inputValue);
+
+              $("." + inputValue).toggle(); 
+
+          }); 
+      }); 
+    </script> 
+    </form>
+    <!------------------Critico--------------------------------->
+    <p class="label_alerta" id="label_alertaMet"> ¡Alerta Meterologica Encendida! </p>
+    <p class="label_alerta" id= "label_gabinete" > ¡Gabinete Abierto! </p>
+
+    <!--------------------------------------------------->
+
+    <!------------------Modificar Sensores--------------------------------->
+    <hr>
+    <p> Modificar datos de Sensor </p>
+    <div class= "container">
+      <div class= "item">
+        <form method="post" action="./Temperatura">
+          <input type="hidden" value="search" id="search" name="action"/>
+        <input type="submit" value="Temperatura"/>
+      </form>
+      </div>
+      <div class= "item">
+        <form method="post" action="./Humedad">
+          <input type="hidden" value="search" id="search" name="action"/>
+          <input type="submit" value="Humedad"/>
+        </form>
+      </div>
+      <div class= "item">
+        <form method="post" action="./Viento">
+          <input type="hidden" value="search" id="search" name="action"/>
+          <input type="submit" value="Viento"/>
+        </form>
+      </div>
+    </div>
+    <!------------------Excel/PDF--------------------------------->
+    <hr>
+    <form method="POST" action="/PDF">
+      <p> Exportar eventos en PDF </p>
+      <input type="hidden" value="Exportar" name="action"/>
+      <input type="submit" value="Exportar"/>
+    </form>
+        
+    <!------------------Luces--------------------------------->
+    <hr>
+    <form method="POST" action="/luces">
+      <p> Horario Encendido Luces: 
+        <input type="text" name="input_encender_luz" id="input_encender_luz" value='00:00' > </p>
+      <p> Horario Apagado Luces: 
+        <input type="text" name="input_apagar_luz" id="input_apagar_luz" value='00:00' ></p>
+      <input type="submit" value="Guardar"/>
+    </form>
+    <hr>
+    <form method="POST" action="/email">
+    <p>Email de Notificacion:
+      <input type="text" name="input_email_notificacion" id="input_email_notificacion" value= "" ></p>
+      <input type="submit" value="Guardar"/>
+    </form>
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="/socket.io/socket.io.js" charset="UTF-8"></script>
+    <script src="/main.js" charset="UTF-8"></script>
+</body>
+</html>

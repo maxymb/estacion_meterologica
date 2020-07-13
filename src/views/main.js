@@ -1,15 +1,17 @@
  const socket = io();
 
- socket.on('cargarGauges', function(data){
-    cargarGauges(data);
+ 
+ 
 
-    horario_encendido = document.getElementById("input_encender_luz");
-    horario_encendido.value = data.result_luz[0].horario_encendido_luminaria;
-    horario_apagado = document.getElementById("input_apagar_luz");
-    horario_apagado.value = data.result_luz[0].horario_apagado_luminaria;
-    email = document.getElementById("input_email_notificacion");
-    email.value = data.result_luz[0].email_notificacion;
+ socket.on('cargarGauges', function(data){
     
+    cargarGauges(data);
+    
+    if (data.Admin){
+        cargarDatosAdminView(data);
+    }else{
+        cargarDatosUserView(data);
+    }
  });
  
  
@@ -79,5 +81,65 @@
                     chartViento.draw(dataViento, optionsViento);
                 }, 1000);
             }
+
+ }
+
+ function cargarDatosAdminView(data){
+    if (!data.EstadoSensorTemperatura){
+        document.getElementById("cbox1").checked = true;
+        document.getElementById("gaugeTemp").style.display = "none";
+    }
+    if (!data.EstadoSensorHumedad){
+        document.getElementById("cbox2").checked = true;
+        document.getElementById("gaugeHum").style.display = "none";
+    }
+    if (!data.EstadoSensorViento){
+        document.getElementById("cbox3").checked = true;
+        document.getElementById("gaugeViento").style.display = "none";
+    }
+    if (data.viento >= data.vent_mincrit){
+        document.getElementById("label_alertaMet").style.display = "block";
+    }else{
+        document.getElementById("label_alertaMet").style.display = "none";
+    }
+
+    if (data.gabineteAbierto){
+        document.getElementById("label_gabinete").style.display = "block";
+    }else{
+        document.getElementById("label_gabinete").style.display = "none";
+    }
+    horario_encendido = document.getElementById("input_encender_luz");
+    horario_encendido.value = data.result_luz[0].horario_encendido_luminaria;
+    horario_apagado = document.getElementById("input_apagar_luz");
+    horario_apagado.value = data.result_luz[0].horario_apagado_luminaria;
+    email = document.getElementById("input_email_notificacion");
+    email.value = data.result_luz[0].email_notificacion;
+ }
+
+ function cargarDatosUserView(data){
+    if (!data.EstadoSensorTemperatura){
+        document.getElementById("gaugeTemp").style.display = "none";
+    }
+    if (!data.EstadoSensorHumedad){
+        document.getElementById("gaugeHum").style.display = "none";
+    }
+    if (!data.EstadoSensorViento){
+        document.getElementById("gaugeViento").style.display = "none";
+    }
+    if (data.viento >= data.vent_mincrit){
+        document.getElementById("label_alertaMet").style.display = "block";
+    }else{
+        document.getElementById("label_alertaMet").style.display = "none";
+    }
+
+    if (data.gabineteAbierto){
+        document.getElementById("label_gabinete").style.display = "block";
+    }else{
+        document.getElementById("label_gabinete").style.display = "none";
+    }
+    horario_encendido = document.getElementById("label_luces_encendido");
+    horario_encendido.innerHTML = data.result_luz[0].horario_encendido_luminaria;
+    horario_apagado = document.getElementById("label_luces_apagado");
+    horario_apagado.innerHTML = data.result_luz[0].horario_apagado_luminaria;
 
  }

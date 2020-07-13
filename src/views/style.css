@@ -1,0 +1,35 @@
+.container{
+    overflow:hidden;
+}
+
+.item{
+    padding: 0.5em;
+    float: left;
+}
+
+.gaugeViento{
+    margin: 0.5em;
+    float: left;
+    width: 120px; 
+    height: 120px;
+}
+
+.gaugeHum{
+    margin: 0.5em;
+    padding: 0.5em;
+    float: left;
+    width: 120px; 
+    height: 120px;
+}
+.gaugeTemp{
+    margin: 0.5em;
+    padding: 0.5em;
+    float: left;
+    width: 120px; 
+    height: 120px;
+}
+
+.label_alerta{
+    font-weight: bold;
+    color: red;
+}

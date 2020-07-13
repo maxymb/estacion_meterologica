@@ -3,6 +3,6 @@ module.exports = {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'db_estacion_meterologica',
+        database: 'db_estacion_meteorologica',
     }
 }

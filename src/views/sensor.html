@@ -20,11 +20,13 @@
             <input type="input_VT_B" name="input_VT_B" id="input_VT_B" value= <%= input_VTB_sensor %> required/> X +
             <input type="input_VT_C" name="input_VT_C" id="input_VT_C" value= <%= input_VTC_sensor %> required/>
         </p>
-  
-        <p>Rango valores criticos: </p>
-        <p> Critico Min: <input type="input_Cr_Min" name="input_Cr_Min" id="input_Cr_Min" value= <%= input_CritMin_sensor %> required/></p>
+        
+        <div class="critico" style= <%= pedir_criticos %>>
+          <p>Rango valores criticos: </p>
+          <p> Critico Min: <input type="input_Cr_Min" name="input_Cr_Min" id="input_Cr_Min" value= <%= input_CritMin_sensor %> required/></p>
           <p> Critico Max: <input type="input_Cr_Max" name="input_Cr_Max" id="input_Cr_Max" value= <%= input_CritMax_sensor %> required/></p>
-  
+        </div>
+
         <p>Tiempo entre muestras:
         <input type="text" name="input_muestreo" id="input_muestreo" value= <%= input_FrecMuestreo_sensor %> required/></p>
   

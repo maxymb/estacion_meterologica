@@ -18,6 +18,10 @@ router.post('/Humedad', async (req, res) => {
 async function mostrarSensor(id_sensor, res){
     //conn.connect();
     const result = await conn.query('SELECT * FROM sensor WHERE id_sensor='+id_sensor+'');
+    pedirCritico = "display:none;";
+    if (id_sensor == 2){
+        pedirCritico = "display:block;";
+    }
     res.render('sensor.html', { 
         label_id_sensor : result[0].id_sensor,
         input_nombre_sensor: result[0].nombre,
@@ -28,6 +32,7 @@ async function mostrarSensor(id_sensor, res){
         input_CritMin_sensor: result[0].critico_min,
         input_CritMax_sensor: result[0].critico_max,
         input_FrecMuestreo_sensor: result[0].frecuencia_muestreo,
+        pedir_criticos: pedirCritico,
         hidden_id: result[0].id_sensor
     });
     //conn.end();
@@ -38,7 +43,7 @@ router.post('/modifi', urlencodedParser, async (req, res) => {
     //conn.connect();
     const result = await conn.query('UPDATE sensor SET nombre="'+input_nombre+'", modelo="'+input_modelo+'", valor_transferencia_A='+input_VT_A+', valor_transferencia_B='+input_VT_B+', valor_transferencia_C='+input_VT_C+', critico_Max='+input_Cr_Max+', critico_Min='+input_Cr_Min+', frecuencia_muestreo='+input_muestreo+' WHERE id_sensor='+hidden_id+'');
     //conn.end();
-    res.render('index.html', { 
+    res.render('admin.html', { 
     });
 })
 
@@ -47,7 +52,7 @@ router.post('/luces', urlencodedParser, async (req, res) => {
     //conn.connect();
     const result = await conn.query('UPDATE configuracion SET horario_encendido_luminaria="'+input_encender_luz+'", horario_apagado_luminaria="'+input_apagar_luz+'" WHERE id_config=1');
     //conn.end();
-    res.render('index.html', { 
+    res.render('admin.html', { 
     });
 })
 
@@ -56,7 +61,7 @@ router.post('/email', urlencodedParser, async (req, res) => {
     //conn.connect();
     const result = await conn.query('UPDATE configuracion SET email_notificacion="'+input_email_notificacion+'" WHERE id_config=1');
     //conn.end();
-    res.render('index.html', { 
+    res.render('admin.html', { 
     });
 })
 
@@ -85,9 +90,33 @@ router.post('/PDF', urlencodedParser, async (req, res) => {
 })
 
 router.post('/', async (req, res) =>{
-    res.render('index.html', { 
+    Admin = true;
+    res.render('admin.html', { 
     });
 })
 
+router.post('/gaugeTemp', async (req, res) =>{
+    if (EstadoSensorTemperatura){
+        EstadoSensorTemperatura = false;
+    }else {
+        EstadoSensorTemperatura = true;
+    }
+})
+
+router.post('/gaugeHum', async (req, res) =>{
+    if (EstadoSensorHumedad){
+        EstadoSensorHumedad = false;
+    }else {
+        EstadoSensorHumedad = true;
+    }
+})
+
+router.post('/gaugeViento', async (req, res) =>{
+    if (EstadoSensorViento){
+        EstadoSensorViento = false;
+    }else {
+        EstadoSensorViento = true;
+    }
+})
 
 module.exports =router;

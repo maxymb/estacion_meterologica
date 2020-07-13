@@ -1,5 +1,5 @@
 const conn = require('./dbconfig');
-const mail_func = require('./account');
+const mail_func = require('./emails/mailSender');
 
 const func = async function controlarCritico(medida){
     //conn.connect();

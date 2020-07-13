@@ -10,16 +10,21 @@ pool.getConnection((err, connection) => {
             console.error('DATABASE CONNECTION WAS CLOSED');
         }
         if (err.code === 'ER_CON_COUNT_ERROR'){
-            console.error('DATABASE HAS TO MANY CONNECTIONS');
+            console.error('DATABASE HAS TOO MANY CONNECTIONS');
         }
         if (err.code === 'ECONNREFUSED'){
-            console.error('DATABASE CONNECTION WAS REFIUSED');
+            console.error('DATABASE CONNECTION WAS REFUSED');
         }
     }
 
-    if (connection) connection.release();
-    console.log('DB is Connected');
-    return;
+    if (connection){
+        connection.release()
+        console.log('DB is Connected')
+    } 
+    else{
+        // throw new Error('Couldn\'t connect to database.')
+    }
+    return
 });
 
 pool.query = promisify(pool.query);
