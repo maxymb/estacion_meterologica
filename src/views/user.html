@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--------------------NavBar-------------------->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <!---------------------------------------------->
+
+        <title>Estacion Meteorologica</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <!------------------------NavBar--------------------------->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" >Estacion Meteorologica</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse"  id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto"></ul>
+          <form class="form-inline my-2 my-lg-0" method="POST" action="./desconectar"> 
+            <button class="btn btn-outline-success my-2 my-sm-0"  type="submit">Desconectar</button>
+          </form>
+        </div>
+      </nav>
+        <!------------------Gauges--------------------------------->
+        <div class= "gaugeContainer">
+            <div class= "gaugeTemp" id="gaugeTemp" >  </div>
+            <div class= "gaugeHum" id="gaugeHum" > </div>
+            <div class= "gaugeViento" id="gaugeViento" > </div>
+        </div>
+    
+        <!------------------Critico--------------------------------->
+        <div class= "container">
+        <p class="label_alerta" id="label_alertaMet"> ¡Alerta Meterologica Encendida! </p>
+        <p class="label_alerta" id= "label_gabinete" > ¡Gabinete Abierto! </p>
+        </div>
+
+        <!------------------Luces--------------------------------->
+        <hr>
+        <div class= "container">
+            <form method="POST" >
+                <p> Horario Encendido Luces: <label id="label_luces_encendido"></label> </p>
+                <p> Horario Apagado Luces:   <label id="label_luces_apagado"></label> </p>
+            </form>
+        </div>
+
+
+
+
+        <input id="userType" value="user" style="display:none;">
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script src="/socket.io/socket.io.js" charset="UTF-8"></script>
+        <script src="/main.js" charset="UTF-8"></script>
+    </body>
+</html>

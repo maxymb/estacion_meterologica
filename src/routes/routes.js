@@ -1,17 +1,18 @@
 const express= require('express');
 const router = express.Router();
 const conn = require('../dbconfig');
+const excel = require('../utils/excelExport')
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 
-router.post('/Temperatura', async (req, res) => {
+router.get('/Temperatura', async (req, res) => {
     mostrarSensor(1, res);
 })
-router.post('/Viento', async (req, res) => {
+router.get('/Viento', async (req, res) => {
     mostrarSensor(2, res);
 })
-router.post('/Humedad', async (req, res) => {
+router.get('/Humedad', async (req, res) => {
     mostrarSensor(3, res);
 })
 
@@ -31,7 +32,6 @@ async function mostrarSensor(id_sensor, res){
         input_VTC_sensor: result[0].valor_transferencia_C,
         input_CritMin_sensor: result[0].critico_min,
         input_CritMax_sensor: result[0].critico_max,
-        input_FrecMuestreo_sensor: result[0].frecuencia_muestreo,
         pedir_criticos: pedirCritico,
         hidden_id: result[0].id_sensor
     });
@@ -39,9 +39,9 @@ async function mostrarSensor(id_sensor, res){
 }
 
 router.post('/modifi', urlencodedParser, async (req, res) => {
-    const {input_nombre, input_modelo, input_VT_A, input_VT_B, input_VT_C, input_Cr_Max, input_Cr_Min, input_muestreo, hidden_id} = req.body;
+    const {input_nombre, input_modelo, input_VT_A, input_VT_B, input_VT_C, input_Cr_Max, input_Cr_Min, hidden_id} = req.body;
     //conn.connect();
-    const result = await conn.query('UPDATE sensor SET nombre="'+input_nombre+'", modelo="'+input_modelo+'", valor_transferencia_A='+input_VT_A+', valor_transferencia_B='+input_VT_B+', valor_transferencia_C='+input_VT_C+', critico_Max='+input_Cr_Max+', critico_Min='+input_Cr_Min+', frecuencia_muestreo='+input_muestreo+' WHERE id_sensor='+hidden_id+'');
+    const result = await conn.query('UPDATE sensor SET nombre="'+input_nombre+'", modelo="'+input_modelo+'", valor_transferencia_A='+input_VT_A+', valor_transferencia_B='+input_VT_B+', valor_transferencia_C='+input_VT_C+', critico_Max='+input_Cr_Max+', critico_Min='+input_Cr_Min+' WHERE id_sensor='+hidden_id+'');
     //conn.end();
     res.render('admin.html', { 
     });
@@ -70,7 +70,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const doc = new PDFDocument();
 
-router.post('/PDF', urlencodedParser, async (req, res) => {
+router.get('/PDF', urlencodedParser, async (req, res) => {
     //conn.connect();
     const result = await conn.query('SELECT * FROM evento');
     console.log(result);
@@ -82,16 +82,43 @@ router.post('/PDF', urlencodedParser, async (req, res) => {
     
         index = index +1;
     }
-    doc.pipe(fs.createWriteStream('Reporte.pdf'));
+    doc.pipe(fs.createWriteStream('./src/views/Reporte.pdf'));
     doc.fontSize(11)
             .text(contenido, 100, 100);
     doc.end();
     //conn.end();
+    
+    res.render('admin.html', { 
+    });
 })
 
-router.post('/', async (req, res) =>{
-    Admin = true;
+router.get('/Excel', urlencodedParser, async (req, res) => {
+    try{
+        const result = await conn.query('SELECT * FROM evento');
+        excel.exportReport(result)
+    } catch(e) { console.log(e) }
+    
     res.render('admin.html', { 
+    });
+})
+
+router.post('/admin', async (req, res) =>{
+    res.render('admin.html', { 
+    });
+})
+
+router.get('/admin', async (req, res) =>{
+    res.render('admin.html', { 
+    });
+})
+
+router.post('/desconectar', async (req, res) =>{
+    res.render('index.html', { 
+    });
+})
+
+router.get('/desconectar', async (req, res) =>{
+    res.render('index.html', { 
     });
 })
 

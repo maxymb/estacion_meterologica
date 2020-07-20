@@ -1,12 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!--------------------NavBar-------------------->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <!---------------------------------------------->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sensor</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!------------------------NavBar--------------------------->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="./admin">Estacion Meteorologica</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="./Temperatura">Temperatura </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./Humedad">Humedad</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./Viento">Viento</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/PDF">Reporte PDF</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/Excel">Reporte Excel</a>
+          </li>
 
+          
+        </ul>
+        <form class="form-inline my-2 my-lg-0" method="POST" action="./desconectar">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Desconectar</button>
+        </form>
+      </div>
+    </nav>
+
+    <!-----------------------Datos---------------------------->
+    <div class= "container">
     <form method="POST" action="/modifi"> <hr>
         <p><b>Id sensor: </b> <%= label_id_sensor %></p>
   
@@ -15,30 +56,29 @@
         <p>Modelo:
           <input type="text" name="input_modelo" id="input_modelo" value= <%= input_modelo_sensor %> required/></p>
   
-        <p>Funcion de Transferencia: </p>
-          <p> <input type="input_VT_A" name="input_VT_A" id="input_VT_A" value= <%= input_VTA_sensor %> required/> X2 +
+        <p>Funcion de Transferencia: 
+            <input type="input_VT_A" name="input_VT_A" id="input_VT_A" value= <%= input_VTA_sensor %> required/> X2 +
             <input type="input_VT_B" name="input_VT_B" id="input_VT_B" value= <%= input_VTB_sensor %> required/> X +
             <input type="input_VT_C" name="input_VT_C" id="input_VT_C" value= <%= input_VTC_sensor %> required/>
         </p>
         
         <div class="critico" style= <%= pedir_criticos %>>
-          <p>Rango valores criticos: </p>
-          <p> Critico Min: <input type="input_Cr_Min" name="input_Cr_Min" id="input_Cr_Min" value= <%= input_CritMin_sensor %> required/></p>
-          <p> Critico Max: <input type="input_Cr_Max" name="input_Cr_Max" id="input_Cr_Max" value= <%= input_CritMax_sensor %> required/></p>
+          <div class ="critContainer">
+            <div class="item">Rango valores criticos:</div>
+             
+            <div class="item">
+              <p> Critico Min: <input type="input_Cr_Min" name="input_Cr_Min" id="input_Cr_Min" value= <%= input_CritMin_sensor %> required/></p>
+              <p> Critico Max: <input type="input_Cr_Max" name="input_Cr_Max" id="input_Cr_Max" value= <%= input_CritMax_sensor %> required/></p>
+            </div>
+          </div>
         </div>
 
-        <p>Tiempo entre muestras:
-        <input type="text" name="input_muestreo" id="input_muestreo" value= <%= input_FrecMuestreo_sensor %> required/></p>
-  
         <input type="hidden" value= <%= hidden_id %> name="hidden_id"/> 
         <input type="hidden" value="modificar_sensor" name="action"/>
         <input type="submit" value="Modificar">
         <!---->
     </form>
-
-    <form method="POST" action="/">
-        <input type="submit" value="Volver">
-    </form>
-
+    </div>
+    
 </body>
 </html>

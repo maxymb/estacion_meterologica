@@ -3,80 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--------------------NavBar-------------------->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <!---------------------------------------------->
+
+
     <script src= "https://code.jquery.com/jquery-1.12.4.min.js"> </script> 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <title>Estacion Meteorologica</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1> Estacion Meteorologica </h1>
+    <!------------------------NavBar--------------------------->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" >Estacion Meteorologica</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="./Temperatura">Temperatura <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./Humedad">Humedad</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./Viento">Viento</a>
+          </li>
+          <li class="nav-item">
+            <a id="reportePDF" class="nav-link">Reporte PDF</a>
+          </li>
+          <li class="nav-item">
+            <a id="reporteExcel" class="nav-link">Reporte Excel</a>
+          </li>
 
-    <div class= "container">
+          
+        </ul>
+        <form class="form-inline my-2 my-lg-0" method="POST" action="./desconectar"> 
+          <button class="btn btn-outline-success my-2 my-sm-0"  type="submit">Desconectar</button>
+        </form>
+      </div>
+    </nav>
+
+    <!-----------------------Gauges---------------------------->
+
+    <div class= "gaugeContainer">
           <div class= "gaugeTemp" id="gaugeTemp" >  </div>
           <div class= "gaugeHum" id="gaugeHum" > </div>
           <div class= "gaugeViento" id="gaugeViento" > </div>
     </div>
 
-    <!--------------------------------------------------->
-
-    <form method="POST" action="/apagarSensores">
-      <label><input type="checkbox" name= "cbox1" id="cbox1" value="gaugeTemp" > Deshabilitar Temperatura</label>
-      <label><input type="checkbox" name= "cbox2" id="cbox2" value="gaugeHum"> Deshabilitar Humedad</label>
-      <label><input type="checkbox" name= "cbox3" id="cbox3" value="gaugeViento"> Deshabilitar Viento</label>
+    <!-----------------------Checkbox Ocultar/Mostrar Sensores---------------------------->
+    <div class= "container">
+      <form method="POST" action="/apagarSensores">
+        <label><input type="checkbox" name= "cbox1" id="cbox1" value="gaugeTemp" > Deshabilitar Temperatura</label>
+        <label><input type="checkbox" name= "cbox2" id="cbox2" value="gaugeHum"> Deshabilitar Humedad</label>
+        <label><input type="checkbox" name= "cbox3" id="cbox3" value="gaugeViento"> Deshabilitar Viento</label>
   
     
     
-    <script type="text/javascript"> 
-      $(document).ready(function() { 
-          $('input[type="checkbox"]').click(function() { 
-              var inputValue = $(this).attr("value"); 
-              $.post("/"+inputValue);
+      <script type="text/javascript"> 
+        $(document).ready(function() { 
+            $('input[type="checkbox"]').click(function() { 
+                var inputValue = $(this).attr("value"); 
+                $.post("/"+inputValue);
 
-              $("." + inputValue).toggle(); 
-
-          }); 
-      }); 
-    </script> 
-    </form>
-    <!------------------Critico--------------------------------->
-    <p class="label_alerta" id="label_alertaMet"> ¡Alerta Meterologica Encendida! </p>
-    <p class="label_alerta" id= "label_gabinete" > ¡Gabinete Abierto! </p>
-
-    <!--------------------------------------------------->
-
-    <!------------------Modificar Sensores--------------------------------->
-    <hr>
-    <p> Modificar datos de Sensor </p>
-    <div class= "container">
-      <div class= "item">
-        <form method="post" action="./Temperatura">
-          <input type="hidden" value="search" id="search" name="action"/>
-        <input type="submit" value="Temperatura"/>
+                $("." + inputValue).toggle(); 
+            }); 
+        }); 
+      </script> 
       </form>
-      </div>
-      <div class= "item">
-        <form method="post" action="./Humedad">
-          <input type="hidden" value="search" id="search" name="action"/>
-          <input type="submit" value="Humedad"/>
-        </form>
-      </div>
-      <div class= "item">
-        <form method="post" action="./Viento">
-          <input type="hidden" value="search" id="search" name="action"/>
-          <input type="submit" value="Viento"/>
-        </form>
-      </div>
     </div>
-    <!------------------Excel/PDF--------------------------------->
-    <hr>
-    <form method="POST" action="/PDF">
-      <p> Exportar eventos en PDF </p>
-      <input type="hidden" value="Exportar" name="action"/>
-      <input type="submit" value="Exportar"/>
-    </form>
-        
+    <!------------------Critico--------------------------------->
+    <div class= "container">
+      <p class="label_alerta" id="label_alertaMet" > ¡Alerta Meterologica Encendida! </p>
+      <p class="label_alerta" id="label_gabinete" > ¡Gabinete Abierto! </p>
+    </div>
+  
     <!------------------Luces--------------------------------->
     <hr>
+    <div class= "container">
     <form method="POST" action="/luces">
       <p> Horario Encendido Luces: 
         <input type="text" name="input_encender_luz" id="input_encender_luz" value='00:00' > </p>
@@ -84,13 +95,29 @@
         <input type="text" name="input_apagar_luz" id="input_apagar_luz" value='00:00' ></p>
       <input type="submit" value="Guardar"/>
     </form>
+    </div>
     <hr>
+    <div class= "container">
     <form method="POST" action="/email">
     <p>Email de Notificacion:
-      <input type="text" name="input_email_notificacion" id="input_email_notificacion" value= "" ></p>
+      <input type="text" name="input_email_notificacion" id="input_email_notificacion" style= "width: 300px;" value= "" ></p>
       <input type="submit" value="Guardar"/>
     </form>
+    </div>
 
+
+    <hr>
+    <div class= "container">
+    <form method="POST" action="/frec_muestreo">
+      <p> Frecuencia de Muestreo: 
+        <input type="text" name="input_frec" id="input_frec" value='1' > </p>
+      <button id="frec"> Guardar </button>
+    </form>
+  </div>
+
+
+
+  <input id="userType" value="admin" style="display:none;">
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/socket.io/socket.io.js" charset="UTF-8"></script>

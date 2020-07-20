@@ -14,7 +14,7 @@ const func = async function controlarCritico(medida){
         tipo_evento = "Evento Critico";
         descripcion = "El sensor "+result[0].nombre+", de modelo: "+result[0].modelo+" ha alcanzado valores criticos. Lectura de de:"+medida+"";
         id_evento = result_id[0]['MAX(id_evento)'] +1;
-        date = new Date().toLocaleString();
+        date = new Date().toLocaleString('es-AR');
         const result_evento = await conn.query('INSERT INTO evento (id_evento, fecha_y_hora, descripcion, tipo_evento) VALUES ('+id_evento+', "'+date+'", "'+descripcion+'", "'+tipo_evento+'")');
         
         mail_func.sendCriticalEmail(result[0].email_notificacion, result[0].nombre);

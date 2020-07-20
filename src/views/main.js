@@ -1,14 +1,87 @@
- const socket = io();
+const socket = io();
 
+ var renderizado = false;
  
- 
+ $('#login-button').on('click', function(){
+    console.log('ENTRO');
+    const user = $('#user').val();
+    const pass = $('#password').val();
+
+    console.log(user);
+    console.log(pass);
+});
+
+
+// $('#frec').on('click', function(){
+//     const freq = $('#input_frec').val();
+//     console.log(freq);
+//     var request = new XMLHttpRequest();
+//     request.open('GET', 'localhost:3000/freq/'+freq, true);
+//     request.send();
+// });
+
+$('#reporteExcel').on('click', function(){
+    event.stopPropagation();
+    event.preventDefault();
+    $.ajax({
+        type: "GET",
+        url: '/Excel'
+      }).done(function(response){
+          console.log('AJAX-GET EXCEL REPORT SUCCESS')
+          alert('Reporte Excel creado con exito!');
+          var link = document.createElement('a');
+          link.href = '/ReporteExcel.xlsx';
+          link.target = '_blank';
+          link.download = 'Reporte';
+          link.click();
+      }).error(function(response){
+          console.log('AJAX-GET EXCEL REPORT ERROR ', response)
+          alert('Ha ocurrido un error generando el reporte.');
+      })
+});
+
+$('#reportePDF').on('click', function(){
+    event.stopPropagation();
+    event.preventDefault();
+    $.ajax({
+        type: "GET",
+        url: '/PDF'
+      }).done(function(response){
+          console.log('AJAX-GET PDF REPORT SUCCESS')
+          alert('Reporte PDF creado con exito!');
+          var link = document.createElement('a');
+          link.href = '/Reporte.pdf';
+          link.target = '_blank';
+          link.download = 'Reporte';
+          link.click();
+      }).error(function(response){
+          console.log('AJAX-GET PDF REPORT ERROR', response)
+          alert('Ha ocurrido un error generando el reporte.');
+      })
+});
 
  socket.on('cargarGauges', function(data){
-    
+     
+    if (data.viento >= data.vent_mincrit){
+        document.getElementById("label_alertaMet").style.display = "block";
+    }else{
+        document.getElementById("label_alertaMet").style.display = "none";
+    }
+    if (data.valor_gab == 1){
+        document.getElementById("label_gabinete").style.display = "block";
+    }else{
+        document.getElementById("label_gabinete").style.display = "none";
+    }
     cargarGauges(data);
     
-    if (data.Admin){
-        cargarDatosAdminView(data);
+
+    usuario = $("#userType").val();
+    console.log(usuario);
+    if (usuario == "admin"){
+        if (!renderizado){
+            cargarDatosAdminView(data);
+            renderizado = true;
+        }
     }else{
         cargarDatosUserView(data);
     }
@@ -97,23 +170,17 @@
         document.getElementById("cbox3").checked = true;
         document.getElementById("gaugeViento").style.display = "none";
     }
-    if (data.viento >= data.vent_mincrit){
-        document.getElementById("label_alertaMet").style.display = "block";
-    }else{
-        document.getElementById("label_alertaMet").style.display = "none";
-    }
 
-    if (data.gabineteAbierto){
-        document.getElementById("label_gabinete").style.display = "block";
-    }else{
-        document.getElementById("label_gabinete").style.display = "none";
-    }
+    
     horario_encendido = document.getElementById("input_encender_luz");
     horario_encendido.value = data.result_luz[0].horario_encendido_luminaria;
     horario_apagado = document.getElementById("input_apagar_luz");
     horario_apagado.value = data.result_luz[0].horario_apagado_luminaria;
     email = document.getElementById("input_email_notificacion");
     email.value = data.result_luz[0].email_notificacion;
+    frec = document.getElementById("input_frec");
+    console.log(data.result_luz[0].frecuencia_muestreo)
+    frec.value = data.result_luz[0].frecuencia_muestreo;
  }
 
  function cargarDatosUserView(data){
@@ -126,17 +193,8 @@
     if (!data.EstadoSensorViento){
         document.getElementById("gaugeViento").style.display = "none";
     }
-    if (data.viento >= data.vent_mincrit){
-        document.getElementById("label_alertaMet").style.display = "block";
-    }else{
-        document.getElementById("label_alertaMet").style.display = "none";
-    }
 
-    if (data.gabineteAbierto){
-        document.getElementById("label_gabinete").style.display = "block";
-    }else{
-        document.getElementById("label_gabinete").style.display = "none";
-    }
+    
     horario_encendido = document.getElementById("label_luces_encendido");
     horario_encendido.innerHTML = data.result_luz[0].horario_encendido_luminaria;
     horario_apagado = document.getElementById("label_luces_apagado");

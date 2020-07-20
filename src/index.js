@@ -28,37 +28,17 @@ app.use(require("./routes/routes"));
 global.EstadoSensorViento = true;
 global.EstadoSensorTemperatura = true;
 global.EstadoSensorHumedad = true;
-global.Admin = false;
-var gabineteAbierto = false;
-//------------------------   Comunicacion Serial -----------------------------
-/*
-const SerialPort = require ('serialport');
-const ReadLine = SerialPort.parsers.Readline;
-
-const port = new SerialPort('/dev/ttyACM0', {
-    baudRate: 9600
-});
-
-const parser = port.pipe(new ReadLine({delimiter: '\r\n'}));
-parser.on('open', function(){
-    console.log('Connection is opened');
-});
-parser.on('data', function(data){
-    let temp = parseInt(data, 10) + '°C'
-    console.log('Connection is opened');
-    io.emit('temperatura', data);
-});
-
-port.on('error', function(err){
-    console.log(err);
-});
-*/
-//-------------------------------------------------------------------------
-
 
 //--------------------------  ARDUINO  -----------------------------------------------
-/*parser.on('data', function(data) {
+var GAB
+parser.on('data', function(data) {
     var RTA = data.substring(0, 4)
+    if ( data.substring(0, 3) == 'GAB')
+        GAB = data.charAt(4)
+    
+    // console.log(data.charAt(4))
+    // console.log(data)
+    
     if (RTA == 'Humi'){
         humedad_arduino = data.substring(10, 15);
         temperatura_arduino = data.substring(31, 36);
@@ -68,66 +48,79 @@ port.on('error', function(err){
         else
         if (viento_arduino.charAt(1) == 'K')
             viento_arduino = '00'+viento_arduino.substring(0, 1);
+        viento_arduino = viento_arduino.substring(0, 3);
         
             // io.emit('viento', viento_arduino);
        
-            console.log('Humedad:'+ humedad_arduino)
-            console.log('Temperatura:'+ temperatura_arduino)
-            console.log('Viento:'+ viento_arduino)
-            ValoresMaxGauges(io, temperatura_arduino, humedad_arduino, viento_arduino);
+            console.log('Humedad:'+ humedad_arduino+' Temperatura:'+ temperatura_arduino+' Viento:'+ viento_arduino+' GAB: '+ GAB)
+            ValoresMaxGauges(io, temperatura_arduino, humedad_arduino, viento_arduino, GAB);
     }
 });
-var job = new CronJob('* * * * * *', function() {
-    port.write('DATA');
+var job;
+async function freq(timer) {
+    const result = await conn.query('SELECT frecuencia_muestreo FROM configuracion WHERE id_config=1');
+    timerSql = result[0].frecuencia_muestreo;
+    if (timerSql)
+        timer = timerSql;
+    if (job)
+        job.stop()
+    job = new CronJob('*/' + timer + ' * * * * *', function() {
+        console.log(this.cronTime.source)
+        port.write('DATA');
+        port.write('\n');
+    }, null, true, 'America/Los_Angeles');
+    job.start();
+}
+freq(1)
+
+
+app.get('/ard/:action', function (req, res) {
+    var action = req.params.action || req.param('action');
+    port.write(action);
     port.write('\n');
-}, null, true, 'America/Los_Angeles');
-job.start();*/
+    res.status(200).send('ok')
+ });
 //-------------------------------------------------------------------------
 
 
 //-------------------  Simular Arduino (entre comillas)----
-var valor_temp;
-var valor_hum;
-var valor_vent;
-var job = new CronJob('* * * * * *', function() {
-    if (EstadoSensorViento) {
-        valor_vent = Math.random() * 64;
-    }else{
-        valor_vent = 0;
-    }
-    if (EstadoSensorTemperatura) {
-        valor_temp = Math.random() * 59;
-    }else{
-        valor_temp = 0;
-    }
-    if (EstadoSensorHumedad) {
-        valor_hum = Math.random() * 100;
-    }else{
-        valor_hum = 0;
-    }
-    
-    
-    
-    console.log('Humedad:' + valor_hum + ' Temperatura:'+ valor_temp + ' Viento:'+ valor_vent)
-    ValoresMaxGauges(io, valor_temp, valor_hum, valor_vent);
-}, null, true, 'America/Los_Angeles');
-job.start();
-
-
-// var valor_temp = Math.random() * 100;
-// var valor_hum = Math.random() * 100;
-// var valor_vent = Math.random() * 100;
-// io.on('connection', (socket)=> {clear
-//     console.log('New connection ID: ', socket.id);
-//     ValoresMaxGauges(socket, valor_temp, valor_hum, valor_vent);                   // <----Llamado al metodo de abajo para que envie los valores al html
-//     valor_temp = Math.random() * 100;
-//     valor_hum = Math.random() * 100;
-//     valor_vent = Math.random() * 100;
-// })
+// var GAB;
+// var valor_temp;
+// var valor_hum;
+// var valor_vent;
+// var job;
+// async function freq(timer) {
+//     const result = await conn.query('SELECT frecuencia_muestreo FROM configuracion WHERE id_config=1');
+//     timer = result[0].frecuencia_muestreo;
+//     if (job)
+//         job.stop()
+//     job = new CronJob('*/' + timer + ' * * * * *', function() {
+//         if (EstadoSensorViento) {
+//             valor_vent = Math.random() * 64;
+//         }else{
+//             valor_vent = 0;
+//         }
+//         if (EstadoSensorTemperatura) {
+//             valor_temp = Math.random() * 59;
+//         }else{
+//             valor_temp = 0;
+//         }
+//         if (EstadoSensorHumedad) {
+//             valor_hum = Math.random() * 100;
+//         }else{
+//             valor_hum = 0;
+//         }
+//         GAB = 0; // GABINETE!!! Cambiar a mano
+//         console.log('Humedad:' + valor_hum + ' Temperatura:'+ valor_temp + ' Viento:'+ valor_vent+ ' Gabinete: '+ GAB)
+//         ValoresMaxGauges(io, valor_temp, valor_hum, valor_vent, GAB);
+//     }, null, true, 'America/Los_Angeles');
+//     job.start();
+// }
+// freq(1);
 //----------------------------------------------------------
 
 // Metodo que envia los valores a los gauges (valor_temp, valor_hum y valor_vent son recibidos de la placa)
-async function ValoresMaxGauges(socket, valor_temp, valor_hum, valor_vent){
+async function ValoresMaxGauges(socket, valor_temp, valor_hum, valor_vent, valor_gab){
 
     //conn.connect();
     const result_crit = await conn.query(`SELECT critico_max, critico_min FROM sensor`);
@@ -145,15 +138,79 @@ async function ValoresMaxGauges(socket, valor_temp, valor_hum, valor_vent){
     console.log(resultado_critico);
 
     
-    const result_luz = await conn.query('SELECT horario_encendido_luminaria, horario_apagado_luminaria, email_notificacion FROM configuracion where id_config=1');
+    const result_luz = await conn.query('SELECT horario_encendido_luminaria, horario_apagado_luminaria, email_notificacion, frecuencia_muestreo FROM configuracion where id_config=1');
     //conn.end();
 
-    socket.emit('cargarGauges', {temperatura, humedad, viento, temp_max, hum_max, vent_max, vent_mincrit, result_luz, EstadoSensorViento, EstadoSensorTemperatura, EstadoSensorHumedad, gabineteAbierto, Admin});
-} 
+    socket.emit('cargarGauges', {temperatura, humedad, viento, temp_max, hum_max, vent_max, vent_mincrit, result_luz, EstadoSensorViento, EstadoSensorTemperatura, EstadoSensorHumedad, valor_gab});
+    
+    
 
+} 
 
 /////-----------------Control Luminarias-----------------------
 
-//subrpoceso
-var fork = require('child_process').fork;
-var subprocess = fork("./src/subproc_controlHora.js");
+
+var job2 = new CronJob('* * * * * *', function() {
+    verificarEstadoLuces();
+}, null, true, 'America/Los_Angeles');
+job2.start();
+/*
+app.get('/freq/:seg', function (req, res) {
+    // var action = req.params.action || req.param('action');
+    console.log(req.params.seg);
+    freq(req.params.seg)
+    res.status(200).send('ok')
+ });
+*/
+ 
+var bodyParser = require('body-parser');
+const { time } = require('console');
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+ app.post('/frec_muestreo', urlencodedParser, async function(req, res){
+    // var action = req.params.action || req.param('action');
+    let {input_frec} = req.body;
+    const result = await conn.query(`UPDATE configuracion SET frecuencia_muestreo=`+input_frec+` WHERE id_config=1 `);
+    
+    console.log(input_frec);
+    freq(input_frec)
+    //res.status(200).send('ok');
+    res.render('admin.html', { 
+    });
+ });
+
+async function verificarEstadoLuces(){
+        const result_hora = await conn.query('SELECT horario_encendido_luminaria, horario_apagado_luminaria FROM configuracion WHERE id_config=1');
+        hora = new Date().toLocaleString().substring(10, 19);
+        h = parseInt(hora.substring(0, 2), 10);
+        h_DB_ON = parseInt(result_hora[0].horario_encendido_luminaria.substring(0, 2), 10);
+        h_DB_OFF = parseInt(result_hora[0].horario_apagado_luminaria.substring(0, 2), 10);
+        m = parseInt(hora.substring(3, 5), 10);
+        m_DB_ON = parseInt(result_hora[0].horario_encendido_luminaria.substring(3, 5), 10);
+        m_DB_OFF = parseInt(result_hora[0].horario_apagado_luminaria.substring(3, 5), 10);
+    
+        if (h_DB_ON > h_DB_OFF){
+            if ((h_DB_ON < h) || (h < h_DB_OFF) || ((h_DB_ON == h) && (m_DB_ON < m)) || ((h_DB_OFF == h) && (m_DB_OFF > m))){
+                //Encender luces
+                console.log('Encendido');
+                port.write('LUCO');
+                port.write('\n');
+            }else{
+                console.log('Apagado');
+                port.write('LUCF');
+                port.write('\n');
+            }
+        }else{
+            if(((h_DB_ON < h) || ((h_DB_ON == h) && (m_DB_ON < m))) && ((h < h_DB_OFF) || ((h_DB_OFF == h) && (m_DB_OFF > m)))){
+                //Encender luces
+                console.log('Encendido');
+                port.write('LUCO');
+                port.write('\n');
+            }else{
+                console.log('Apagado');
+                port.write('LUCF');
+                port.write('\n');
+            }
+        }
+}
+/////-----------------Control Luminarias-----------------------
